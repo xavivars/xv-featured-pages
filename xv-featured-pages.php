@@ -191,4 +191,24 @@ License: GPLv3
 	function tags_support_pages() {
 		register_taxonomy_for_object_type('post_tag', 'page');
 	}
+
+	// Add to the init hook of your theme functions.php file
+	add_filter('request', 'my_expanded_request');  
+	 
+	function my_expanded_request($q) {
+		if (isset($q['tag']) || isset($q['category_name'])) {
+			if(is_array($q['post_type'])) {
+				if(!in_array($q['post_type'], 'page')) {
+					array_push($q['post_type'], 'page');
+				}
+			} else {
+				$q['post_type'] = array('post', 'page');
+			}
+		}
+		
+		return $q;
+	}
+
+
+
 	add_action( 'widgets_init', create_function('', 'return register_widget("XV_Featured_Pages");') );
